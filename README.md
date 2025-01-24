@@ -1,1 +1,1 @@
-# TreesGraphs
+This project is a Python file that works around the concepts of Trees and Graphs while working with data. It includes multiple classes with defined functions to help initialize the layouts of a Tree as well as a Directed Graph. Once the file is run, you will be able to view the Terminal to see a Tree with eight digits on top of a Directed Graph that contains multiple vertices and edges. 
