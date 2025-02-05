@@ -4,189 +4,191 @@
 ################################################
 
 class Node:
-    def __init__(self, idata):
-        self.data = idata
+    def __init__(self, data):
+        """Initialize a node with data and an empty list of children."""
+        self.data = data
         self.children = []
 
-    def getData(self):
+    def get_data(self):
+        """Return node data."""
         return self.data
 
-    def setData(self, newdata):
-        self.data = newdata
+    def set_data(self, new_data):
+        """Update node data."""
+        self.data = new_data
 
-    def getChildren(self):
+    def get_children(self):
+        """Return list of children nodes."""
         return self.children
 
-    def addChild(self, idata):
-        newNode = Node(idata)
-        self.children.append(newNode)
-        return newNode
+    def add_child(self, data):
+        """Add a new child node with given data and return it."""
+        new_node = Node(data)
+        self.children.append(new_node)
+        return new_node
 
-    def printNode(self):
-        print(self.data, end = ' ')
-        print("[", end = ' ')
+    def print_node(self):
+        """Recursively print node and its children."""
+        print(self.data, end=' [ ')
         for child in self.children:
-            child.printNode()
-        print("]", end = ' ')
+            child.print_node()
+        print('] ', end='')
 
-    def addChildNode(self, childnode):
-        self.children.append(childnode)
+    def add_child_node(self, child_node):
+        """Add an existing child node."""
+        self.children.append(child_node)
+
 
 class Tree:
     def __init__(self, data):
-        node = Node(data)
-        self.root = node
+        """Initialize tree with root node."""
+        self.root = Node(data)
 
-    def getRoot(self):
+    def get_root(self):
+        """Return root node."""
         return self.root
 
-    def insert(self, data, node):
-        tempNode = self.root
-        for i in data:
-            tempNode = tempNode.getChildren()[i]
-        tempNode.addChild(node)
+    def insert(self, path, data):
+        """Insert a node at a given path in the tree."""
+        temp_node = self.root
+        for index in path:
+            if 0 <= index < len(temp_node.children):
+                temp_node = temp_node.children[index]
+            else:
+                return  # Invalid path, do nothing
+        temp_node.add_child(data)
 
-    def printTreeRecursive(self, currentNode):
-        if currentNode.getChildren() == []:
-            print(currentNode.getData())
-        else:
-            print(currentNode.getData())
-            for i in range(len(currentNode.getChildren())):
-                self.printTreeRecursive(currentNode.getChildren()[i])
-                
-    def printTree(self):
-        tempNode = self.getRoot()
-        self.printTreeRecursive(tempNode)
+    def print_tree_recursive(self, current_node):
+        """Recursively print tree nodes."""
+        print(current_node.get_data())
+        for child in current_node.get_children():
+            self.print_tree_recursive(child)
 
-    def searchTree(self, item):
-        for node in self.children:
-            n = node.find(item)
-            if n:
+    def print_tree(self):
+        """Print entire tree from the root."""
+        self.print_tree_recursive(self.root)
+
+    def search_tree(self, item):
+        """Search for an item in the tree recursively."""
+        def dfs(node):
+            if node.get_data() == item:
                 return True
-        return False    
+            return any(dfs(child) for child in node.get_children())
         
-#test
-print()
-print("------------------ Tree ------------------")
+        return dfs(self.root)
+
+
+# Test Tree
+print("\n------------------ Tree ------------------")
 t = Tree(7)
-t.insert([],8)
-t.insert([],2)
-t.insert([],4)
-t.insert([],6)
+t.insert([], 8)
+t.insert([], 2)
+t.insert([], 4)
+t.insert([], 6)
 t.insert([1], 9)
-t.insert([1],1)
-t.insert([1, 0],5)
-t.printTree()
+t.insert([1], 1)
+t.insert([1, 0], 5)
+t.print_tree()
 print()
 
 
 class Tree1:
     def __init__(self):
+        """Initialize an empty tree."""
         self.root = None
 
-    def setRoot(self, idata):
-        newnode = Node(idata)
-        self.root = newnode
-        return newnode
+    def set_root(self, data):
+        """Set the root node with given data."""
+        self.root = Node(data)
+        return self.root
 
-    def recursivesearch(self, item, node = None):
-        if node == None:
+    def recursive_search(self, item, node=None):
+        """Recursively search for an item in the tree."""
+        if node is None:
             node = self.root
-        if node == None:
+        if not node:
             return False
-        if node.getData() == item:
+        if node.get_data() == item:
             return True
-        else:
-            for child in node.getChildren():
-                if self.recursivesearch(item, child) == True:
-                    return True
+        return any(self.recursive_search(item, child) for child in node.get_children())
+
+    def dfs(self, item):
+        """Perform depth-first search (DFS) to find an item."""
+        if not self.root:
             return False
         
-    def dfs(self, item):
-        if self.root == None:
-            return False
-        node = self.root
-        print(node.getData())
-        if node.getData() == item:
-            return True
-        visited[node] = 1
-        stack = []
-        for child in node.getChildren():
-            if child not in visited:
-                stack.append(child)
-        while len(stack) > 0:
-            node = stack.pop()
-            print(node.getData())
-            if node.getData() == item:
-                return True
-            else:
-                visited[node] = 1
-                for child in node.getChildren():
-                    if child not in visited:
-                        stack.append(child)
-        return False       
+        visited = set()
+        stack = [self.root]
 
-                
-def Tree1Test():
+        while stack:
+            node = stack.pop()
+            print(node.get_data())
+            if node.get_data() == item:
+                return True
+            
+            visited.add(node)
+            for child in node.get_children():
+                if child not in visited:
+                    stack.append(child)
+        
+        return False
+
+
+# Test Tree1
+def tree1_test():
     t = Tree1()
-    n1 = t.setRoot(1)
-    n4 = n1.addChild(4)
-    n12 = n1.addChild(12)
-    n7 = n4.addChild(7)
-    n8 = n4.addChild(8)
-    n111 = n12.addChild(111)
+    n1 = t.set_root(1)
+    n4 = n1.add_child(4)
+    n12 = n1.add_child(12)
+    n4.add_child(7)
+    n4.add_child(8)
+    n12.add_child(111)
     return t
 
 
-        
-class dGraph:
+class DGraph:
     def __init__(self):
+        """Initialize an empty directed graph."""
         self.vertices = {}
 
-    def makeVertex(self, vertex):
-        if isinstance(vertex, Node) and vertex.data not in self.vertices:
-            self.vertices[vertex.data] = vertex
+    def make_vertex(self, node):
+        """Add a vertex if it is a Node and not already present."""
+        if isinstance(node, Node) and node.data not in self.vertices:
+            self.vertices[node.data] = node
             return True
-        else:
-            return False
+        return False
 
-    def makeEdge(self, v1, v2):
-        if v1 in self.vertices and v2 in self.vertices: 
-            self.vertices[v1].addChildNode(v2)            
-            self.vertices[v2].addChildNode(v1)           
+    def make_edge(self, v1, v2):
+        """Create a directed edge between two existing vertices."""
+        if v1 in self.vertices and v2 in self.vertices:
+            self.vertices[v1].add_child_node(self.vertices[v2])
             return True
-        else:
-            return False
-        
-    def searchGraph(self, graph, item):
-        for i in graph:
-            if graph[i] == item:
-                return True
-            else:
-                return False
-     
-    def printGraph(self):
-        for key in sorted(list(self.vertices.keys())):
-            print(key + str(self.vertices[key].children))
+        return False
 
-#test
-graph = dGraph()
+    def print_graph(self):
+        """Print the adjacency list representation of the graph."""
+        for key in sorted(self.vertices.keys()):
+            children = [child.get_data() for child in self.vertices[key].get_children()]
+            print(f"{key}: {children}")
+
+
+# Test Directed Graph
+graph = DGraph()
 first = Node('A')
-graph.makeVertex(first)
-graph.makeVertex(Node('B'))
+graph.make_vertex(first)
 for i in range(ord('A'), ord('K')):
-	graph.makeVertex(Node(chr(i)))
+    graph.make_vertex(Node(chr(i)))
 
 edges = ['AB', 'AE', 'BK', 'BS', 'BY', 'DH', 'EH', 'FG', 'FI', 'FJ', 'GJ', 'HI']
 for edge in edges:
-	graph.makeEdge(edge[:1], edge[1:])
-	
+    graph.make_edge(edge[0], edge[1])
+
 print("------------- Directed Graph -------------")
-graph.printGraph()
+graph.print_graph()
 print()
 
 ##############################################################################################################
-#   The worst case running time of the above search functions would be O(n^2). This is known because each    #                 
-#   function first runs through either the directed graph or the tree in a loop. After that, the item is     #
-#   compared to the data in the tree or directed graph to see if that item actually exists.                  #
+#   The worst-case running time of the search functions is O(n^2). This is because each function iterates    #
+#   through the tree or graph and then compares values, which can result in quadratic complexity in some    #
+#   cases. Optimizations such as better indexing structures can improve performance.                        #
 ##############################################################################################################
